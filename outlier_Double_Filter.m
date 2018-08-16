@@ -1,7 +1,7 @@
 % Outlier/filtering Script
 % Written by Tianrui Zhu, Final Update: 2018-07-11
 
-function [ cleansignal_s, cleansignal_m, cleansignal_d, T_cleansignal_s,T_cleansignal_m,T_cleansignal_d pulse_pressure ] = outlier_Double_Filter( signal_s, signal_d, signal_m, T_signal_s, T_signal_d,T_signal_m )
+function [ cleansignal_s, cleansignal_m, cleansignal_d, T_cleansignal_s,T_cleansignal_m,T_cleansignal_d pulse_pressure ] = outlier_Double_Filter( signal_s, signal_m, signal_d, T_signal_s, T_signal_d,T_signal_m )
 
 % This is the function which actually removes outliers/filters the dataset.
 % The criteria defaulted to (and was used in all figures we generated) is
@@ -74,13 +74,14 @@ end
 
 
 
-current_s = cleansignal_s(i);
-current_d = cleansignal_d(i);
-current_m = cleansignal_m(i);
+current_s = 60;
+current_d = 30;
+current_m = 40;
+tao = 40;
 
 % Double Filtering the data
-for i = length(singal_s) - 1
-    tao = 40;
+for i = 1:length(signal_s) - 1
+
     if cleansignal_s(1,i+1) ~= -10
         next_s = cleansignal_s(1,i+1);
         if next_s - current_s > tao
@@ -90,12 +91,35 @@ for i = length(singal_s) - 1
             cleansignal_s(2,i+1) = 1;
             cleansignal_d(2,i+1) = 1;
             cleansignal_m(2,i+1) = 1;
+        else
+            current_s = next_s;
+        end
     end
     if cleansignal_m(1,i) ~= -10
         next_m = cleansignal_m(1,i);
+        if next_m - current_m > tao
+            cleansignal_s(1,i+1) = -10;
+            cleansignal_d(1,i+1) = -10;
+            cleansignal_m(1,i+1) = -10;
+            cleansignal_s(2,i+1) = 1;
+            cleansignal_d(2,i+1) = 1;
+            cleansignal_m(2,i+1) = 1;
+        else
+            current_m = next_m;
+        end
     end 
     if cleansignal_d(1,i) ~= -10
         next_d = cleansignal_d(1,i);
+        if next_d - current_d > tao
+            cleansignal_s(1,i+1) = -10;
+            cleansignal_d(1,i+1) = -10;
+            cleansignal_m(1,i+1) = -10;
+            cleansignal_s(2,i+1) = 1;
+            cleansignal_d(2,i+1) = 1;
+            cleansignal_m(2,i+1) = 1;
+        else
+            current_d = next_d;
+        end
     end
 end
 
