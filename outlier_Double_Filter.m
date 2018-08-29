@@ -1,7 +1,7 @@
 % Outlier/filtering Script
 % Written by Tianrui Zhu, Final Update: 2018-07-11
 
-function [ cleansignal_s, cleansignal_m, cleansignal_d, T_cleansignal_s,T_cleansignal_m,T_cleansignal_d pulse_pressure ] = outlier_Double_Filter( signal_s, signal_m, signal_d, T_signal_s, T_signal_d,T_signal_m )
+function [ cleansignal_s, cleansignal_m, cleansignal_d, T_cleansignal_s,T_cleansignal_m,T_cleansignal_d, pulse_pressure ] = outlier_Double_Filter( signal_s, signal_m, signal_d, T_signal_s, T_signal_m,T_signal_d )
 
 % This is the function which actually removes outliers/filters the dataset.
 % The criteria defaulted to (and was used in all figures we generated) is
@@ -32,7 +32,7 @@ T_cleansignal_m(1,:) = T_signal_m;
 
 % Flagging
 for i = 1:length(signal_s)
-    sigma = 3;
+    sigma = 5;
     if (signal_s(i) - signal_m(i) < sigma) || (signal_m(i) - signal_d(i) < sigma) || signal_s(i) < 0 || signal_d(i) < 0|| signal_m(i) < 0 
         cleansignal_s(1,i) = -10;
         cleansignal_s(2,i) = 1;
@@ -79,12 +79,16 @@ current_d = 30;
 current_m = 40;
 tao = 40;
 
+count_s = 0;
+count_m = 0;
+count_d = 0;
+
 % Double Filtering the data
 for i = 1:length(signal_s) - 1
 
-    if cleansignal_s(1,i+1) ~= -10
+    if cleansignal_s(1,i+1) ~= -10 
         next_s = cleansignal_s(1,i+1);
-        if next_s - current_s > tao
+        if (abs(next_s - current_s) > tao && count_s < 5) || next_s > 100
             cleansignal_s(1,i+1) = -10;
             cleansignal_d(1,i+1) = -10;
             cleansignal_m(1,i+1) = -10;
@@ -94,10 +98,12 @@ for i = 1:length(signal_s) - 1
         else
             current_s = next_s;
         end
+    else
+        count_s = count_s + 1;    
     end
     if cleansignal_m(1,i) ~= -10
         next_m = cleansignal_m(1,i);
-        if next_m - current_m > tao
+        if (abs(next_m - current_m) >tao && count_m < 5) || next_m > 100 
             cleansignal_s(1,i+1) = -10;
             cleansignal_d(1,i+1) = -10;
             cleansignal_m(1,i+1) = -10;
@@ -107,10 +113,12 @@ for i = 1:length(signal_s) - 1
         else
             current_m = next_m;
         end
+    else
+        count_m = count_m + 1;
     end 
     if cleansignal_d(1,i) ~= -10
         next_d = cleansignal_d(1,i);
-        if next_d - current_d > tao
+        if (abs(next_d - current_d) > tao && count_d < 5) || next_d > 100
             cleansignal_s(1,i+1) = -10;
             cleansignal_d(1,i+1) = -10;
             cleansignal_m(1,i+1) = -10;
@@ -120,6 +128,8 @@ for i = 1:length(signal_s) - 1
         else
             current_d = next_d;
         end
+    else
+        count_d = count_d + 1;
     end
 end
 

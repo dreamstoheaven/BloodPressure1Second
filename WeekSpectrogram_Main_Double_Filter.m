@@ -25,24 +25,24 @@ w_T_d = [];
 % w_T_O2 = [];
 
 % INPUT REQUIRED INFORMATION HERE!
-NeoID = 1127;
-bednumber = 17;
-birthtime = 2488440;
-starttime = 2502300;
-endtime = 3438900;
+NeoID = 2920;
+bednumber = 20;
+birthtime = 100546260;
+starttime = 100569720;
+endtime = 101213280;
 
 % Recursively generate filtered data for the baby's first seven days.
-for i = floor(starttime/86400):(floor(starttime/86400)+6)
+for i = floor(starttime/86400):(floor(starttime/86400))+6
     disp(i)
     bednumber = num2str(bednumber,'%02d');
     i = num2str(i,'%04d');
     v = num2str(floor(endtime/86400),'%04d');
     try
-    if strcmp(i,'0028') == 1 && strcmp(i,v) == 0
+    if strcmp(i,'1164') == 1 && strcmp(i,v) == 0
     [s,m,d,T_s,T_m,T_d] = WeekPlotting_Double_Filter(bednumber,i,birthtime,(starttime-floor(starttime/86400)*86400),86400);
-    elseif  strcmp(i,'0028') == 1 && strcmp(i,v) == 1
+    elseif  strcmp(i,'1164') == 1 && strcmp(i,v) == 1
     [s,m,d,T_s,T_m,T_d] = WeekPlotting_Double_Filter(bednumber,i,birthtime,(starttime-floor(starttime/86400)*86400),endtime - floor(endtime/86400)*86400);
-    elseif strcmp(i,'0028') == 0 && strcmp(i,v) == 0
+    elseif strcmp(i,'1164') == 0 && strcmp(i,v) == 0
     [s,m,d,T_s,T_m,T_d] = WeekPlotting_Double_Filter(bednumber,i,birthtime,1,86400);
     else
     [s,m,d,T_s,T_m,T_d] = WeekPlotting_Double_Filter(bednumber,i,birthtime,1,endtime - floor(endtime/86400)*86400);
@@ -98,10 +98,10 @@ end
 end
 
 if isnan(w_m(1,1))
-    for i = 1:86400
+    for i = 2:86400
         if isnan(w_m(1,i))
         else
-            w_m(1,1) = w_m(1,w_m(1,i));
+            w_m(1,1) = w_m(1,i);
             break
         end
     end
@@ -112,6 +112,7 @@ end
  w_d(1,:) = fillmissing(w_d(1,:),'linear');
 
  
+figure
 plot(w_T_m*24,w_m(1,:));
 axis([0, inf, 0, 150]);
 xlabel('Time Since Birth in Hours', 'FontSize', 16);

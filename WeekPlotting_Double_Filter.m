@@ -48,10 +48,10 @@ catch
 
     T_s = a(:,1);
     s = a(:,2);
-    T_m = b(:,1);
-    m = b(:,2);
-    T_d = c(:,1);
-    d = c(:,2);
+    T_d = b(:,1);
+    d = b(:,2);
+    T_m = c(:,1);
+    m = c(:,2);
     %
     %[s,m,d,T_s,T_m,T_d,pulsepressure] = outlier(sig12,sig13,sig14,T_sig12, T_sig13, T_sig14);
 
